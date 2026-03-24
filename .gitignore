@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.DS_Store
+Thumbs.db
+backend/data/
+backend/uploads/
+frontend/.env.local
+.tools/
+*.log
+test-upload.png
