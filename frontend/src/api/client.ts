@@ -1,4 +1,13 @@
-import type { ImageLibraryItem, PostDetail, PostPayload, PostSummary, User } from "../types";
+import type {
+  ImageLibraryItem,
+  MoodboardGalleryItem,
+  MoodboardTemplate,
+  MoodboardTemplatePayload,
+  PostDetail,
+  PostPayload,
+  PostSummary,
+  User,
+} from "../types";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000";
 
@@ -113,6 +122,53 @@ export async function uploadImage(file: File, token: string): Promise<{ url: str
     {
       method: "POST",
       body,
+    },
+    token,
+  );
+}
+
+export async function fetchMoodboardTemplates(token: string): Promise<MoodboardTemplate[]> {
+  return request("/api/admin/moodboards/templates", undefined, token);
+}
+
+export async function fetchMoodboardGallery(): Promise<MoodboardGalleryItem[]> {
+  return request("/api/moodboards/gallery");
+}
+
+export async function createMoodboardTemplate(
+  payload: MoodboardTemplatePayload,
+  token: string,
+): Promise<MoodboardTemplate> {
+  return request(
+    "/api/admin/moodboards/templates",
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+    },
+    token,
+  );
+}
+
+export async function updateMoodboardTemplate(
+  templateId: number,
+  payload: MoodboardTemplatePayload,
+  token: string,
+): Promise<MoodboardTemplate> {
+  return request(
+    `/api/admin/moodboards/templates/${templateId}`,
+    {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    },
+    token,
+  );
+}
+
+export async function deleteMoodboardTemplate(templateId: number, token: string): Promise<void> {
+  return request(
+    `/api/admin/moodboards/templates/${templateId}`,
+    {
+      method: "DELETE",
     },
     token,
   );

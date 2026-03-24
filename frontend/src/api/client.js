@@ -75,6 +75,29 @@ export async function uploadImage(file, token) {
         body,
     }, token);
 }
+export async function fetchMoodboardTemplates(token) {
+    return request("/api/admin/moodboards/templates", undefined, token);
+}
+export async function fetchMoodboardGallery() {
+    return request("/api/moodboards/gallery");
+}
+export async function createMoodboardTemplate(payload, token) {
+    return request("/api/admin/moodboards/templates", {
+        method: "POST",
+        body: JSON.stringify(payload),
+    }, token);
+}
+export async function updateMoodboardTemplate(templateId, payload, token) {
+    return request(`/api/admin/moodboards/templates/${templateId}`, {
+        method: "PUT",
+        body: JSON.stringify(payload),
+    }, token);
+}
+export async function deleteMoodboardTemplate(templateId, token) {
+    return request(`/api/admin/moodboards/templates/${templateId}`, {
+        method: "DELETE",
+    }, token);
+}
 export function resolveAssetUrl(path) {
     if (!path) {
         return null;

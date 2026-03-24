@@ -41,3 +41,32 @@ export interface ImageLibraryItem {
   source: string;
   slug: string | null;
 }
+
+export interface MoodboardTemplatePayload {
+  name: string;
+  group_name: string;
+  board_title: string;
+  board_note: string;
+  canvas_width: number;
+  canvas_height: number;
+  background_color: string;
+  preview_image: string | null;
+  board_items: Record<string, unknown>[];
+  doodles: Record<string, unknown>[];
+}
+
+export interface MoodboardTemplate extends MoodboardTemplatePayload {
+  id: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MoodboardGalleryItem {
+  id: number;
+  name: string;
+  group_name: string;
+  board_title: string;
+  board_note: string;
+  preview_image: string | null;
+  updated_at: string;
+}

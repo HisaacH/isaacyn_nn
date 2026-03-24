@@ -1,18 +1,41 @@
 import { computed, onMounted, ref } from "vue";
-import { fetchPublishedPosts, resolveAssetUrl } from "../api/client";
+import { RouterLink } from "vue-router";
+import { fetchMoodboardGallery, fetchPublishedPosts, resolveAssetUrl } from "../api/client";
 const posts = ref([]);
+const boards = ref([]);
 const loading = ref(true);
 const error = ref("");
 const layoutCycle = ["tall", "square", "wide", "medium", "square", "tall"];
-const cards = computed(() => posts.value.map((post, index) => ({
-    ...post,
-    cover: resolveAssetUrl(post.cover_image),
-    layout: layoutCycle[index % layoutCycle.length],
-    stamp: post.video_url || post.video_upload_path ? "Video" : "Story",
-})));
+const cards = computed(() => {
+    const postCards = posts.value.map((post, index) => ({
+        id: `post-${post.id}`,
+        type: "post",
+        title: post.title,
+        summary: post.summary,
+        cover: resolveAssetUrl(post.cover_image),
+        layout: layoutCycle[index % layoutCycle.length],
+        stamp: post.video_url || post.video_upload_path ? "Video" : "Story",
+        href: `/posts/${post.slug}`,
+        date: post.published_at || post.created_at,
+    }));
+    const boardCards = boards.value.map((board, index) => ({
+        id: `board-${board.id}`,
+        type: "moodboard",
+        title: board.name,
+        summary: board.board_note || `${board.group_name} moodboard`,
+        cover: board.preview_image,
+        layout: layoutCycle[(postCards.length + index) % layoutCycle.length],
+        stamp: "Moodboard",
+        href: "/moodboard",
+        date: board.updated_at,
+    }));
+    return [...boardCards, ...postCards];
+});
 onMounted(async () => {
     try {
-        posts.value = await fetchPublishedPosts();
+        const [publishedPosts, galleryBoards] = await Promise.all([fetchPublishedPosts(), fetchMoodboardGallery()]);
+        posts.value = publishedPosts;
+        boards.value = galleryBoards;
     }
     catch (err) {
         error.value = err instanceof Error ? err.message : "加载失败";
@@ -51,7 +74,7 @@ __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
 /** @type {__VLS_StyleScopedClasses['flow-hero__panel']} */ ;
 __VLS_asFunctionalElement1(__VLS_intrinsics.span, __VLS_intrinsics.span)({});
 __VLS_asFunctionalElement1(__VLS_intrinsics.strong, __VLS_intrinsics.strong)({});
-(__VLS_ctx.posts.length);
+(__VLS_ctx.cards.length);
 __VLS_asFunctionalElement1(__VLS_intrinsics.small, __VLS_intrinsics.small)({});
 if (__VLS_ctx.loading) {
     __VLS_asFunctionalElement1(__VLS_intrinsics.section, __VLS_intrinsics.section)({
@@ -87,13 +110,13 @@ else {
             key: (card.id),
             ...{ class: "masonry-card" },
             ...{ class: (`masonry-card--${card.layout}`) },
-            to: (`/posts/${card.slug}`),
+            to: (card.href),
         }));
         const __VLS_2 = __VLS_1({
             key: (card.id),
             ...{ class: "masonry-card" },
             ...{ class: (`masonry-card--${card.layout}`) },
-            to: (`/posts/${card.slug}`),
+            to: (card.href),
         }, ...__VLS_functionalComponentArgsRest(__VLS_1));
         /** @type {__VLS_StyleScopedClasses['masonry-card']} */ ;
         const { default: __VLS_5 } = __VLS_3.slots;
@@ -131,13 +154,13 @@ else {
             ...{ class: "meta" },
         });
         /** @type {__VLS_StyleScopedClasses['meta']} */ ;
-        (new Date(card.published_at || card.created_at).toLocaleDateString());
+        (new Date(card.date).toLocaleDateString());
         __VLS_asFunctionalElement1(__VLS_intrinsics.h3, __VLS_intrinsics.h3)({});
         (card.title);
         __VLS_asFunctionalElement1(__VLS_intrinsics.p, __VLS_intrinsics.p)({});
         (card.summary);
         // @ts-ignore
-        [posts, loading, error, error, cards, cards,];
+        [cards, cards, cards, loading, error, error,];
         var __VLS_3;
         // @ts-ignore
         [];
